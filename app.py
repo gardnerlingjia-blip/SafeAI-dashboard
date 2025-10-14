@@ -9,8 +9,7 @@ st.set_page_config(page_title="SafeAI Audit Dashboard", layout="wide")
 
 # Sidebar setup
 
-with open("assets/logo.txt", "r") as file:
-    st.sidebar.text(file.read())
+st.sidebar.image("assets/logo.png", width=150)
 
 st.sidebar.title("SafeAI Dashboard")
 uploaded_file = st.sidebar.file_uploader("Upload Prediction CSV", type=["csv"])
