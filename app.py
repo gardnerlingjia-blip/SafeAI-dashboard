@@ -29,21 +29,16 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+
 # Sidebar
 with st.sidebar:
-    st.image("assets/logo.jpg", width=150)
+    st.image("assets/logo.png", width=150)
     st.markdown("## SafeAI Dashboard")
     uploaded_file = st.file_uploader("Upload Prediction CSV", type=["csv"])
-    selected = option_menu(
-        menu_title=None,
-        options=["Dashboard", "Compliance", "Report"],
-        icons=["bar-chart", "shield-check", "file-earmark-text"],
-        menu_icon="cast",
-        default_index=0,
-        orientation="vertical"
-    )
+    selected = st.selectbox("Navigate", ["Dashboard", "Compliance", "Report"])
 
 st.title(f"{selected} Section")
+
 
 
 # Load data into session state
