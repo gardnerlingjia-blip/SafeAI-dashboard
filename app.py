@@ -31,7 +31,7 @@ st.markdown("""
 
 # Sidebar
 with st.sidebar:
-    st.image("assets/logo.png", width=150)
+    st.image("assets/logo.jpg", width=150)
     st.markdown("## SafeAI Dashboard")
     uploaded_file = st.file_uploader("Upload Prediction CSV", type=["csv"])
     selected = option_menu(
