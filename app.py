@@ -4,15 +4,47 @@ import pandas as pd
 from pages.dashboard import show_dashboard
 from pages.compliance import show_compliance
 from utils.metrics import compute_metrics
+from streamlit_option_menu import option_menu
+import base64
 
-st.set_page_config(page_title="SafeAI Audit Dashboard", layout="wide")
+import plotly.express as px
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, accuracy_score
 
-# Sidebar setup
 
-st.sidebar.image("assets/logo.png", width=150)
 
-st.sidebar.title("SafeAI Dashboard")
-uploaded_file = st.sidebar.file_uploader("Upload Prediction CSV", type=["csv"])
+# Custom CSS
+st.markdown("""
+    <style>
+        .sidebar .sidebar-content {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .css-1d391kg {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+# Sidebar
+with st.sidebar:
+    st.image("assets/logo.png", width=150)
+    st.markdown("## SafeAI Dashboard")
+    uploaded_file = st.file_uploader("Upload Prediction CSV", type=["csv"])
+    selected = option_menu(
+        menu_title=None,
+        options=["Dashboard", "Compliance", "Report"],
+        icons=["bar-chart", "shield-check", "file-earmark-text"],
+        menu_icon="cast",
+        default_index=0,
+        orientation="vertical"
+    )
+
+st.title(f"{selected} Section")
+
 
 # Load data into session state
 if uploaded_file:
@@ -47,3 +79,35 @@ elif page == "Report":
 
         st.subheader("Export Report")
         st.download_button("Download CSV", df.to_csv(index=False), "audit_report.csv", "text/csv")
+
+
+if uploaded_file:
+    df = pd.read_csv(uploaded_file)
+
+    if 'actual' in df.columns and 'predicted' in df.columns:
+        # Accuracy
+        accuracy = accuracy_score(df['actual'], df['predicted'])
+        st.metric("Model Accuracy", f"{accuracy:.2%}")
+
+        # Compliance check
+        safety_threshold = 0.9
+        if accuracy < safety_threshold:
+            st.error(f"⚠️ Accuracy below {safety_threshold:.0%}")
+        else:
+            st.success("✅ Accuracy meets safety threshold")
+
+        # Class distribution
+        st.subheader("Class Distribution")
+        fig_bar = px.bar(df['predicted'].value_counts(), title="Predicted Class Distribution")
+        st.plotly_chart(fig_bar)
+
+        # Confusion matrix
+        st.subheader("Confusion Matrix")
+        labels = sorted(df['actual'].unique())
+        cm = confusion_matrix(df['actual'], df['predicted'], labels=labels)
+        fig, ax = plt.subplots()
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=labels, yticklabels=labels)
+        st.pyplot(fig)
+    else:
+        st.error("CSV must contain 'actual' and 'predicted' columns.")
+
