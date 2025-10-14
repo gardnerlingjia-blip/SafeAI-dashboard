@@ -33,8 +33,8 @@ if uploaded_file:
     df = pd.read_csv(uploaded_file)
     st.success("File uploaded successfully.")
     # Check required columns
-    if "confidence" not in df.columns or "prediction" not in df.columns:
-        st.error("CSV must contain 'prediction' and 'confidence' columns.")
+    if "confidence" not in df.columns or "redicted" not in df.columns:
+        st.error("CSV must contain 'predicted' and 'confidence' columns.")
     else:
         # Add Audit Result column
         df["Audit Result"] = np.where(df["confidence"] >= threshold, "Pass", "Fail")
