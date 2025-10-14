@@ -27,7 +27,7 @@ if uploaded_file is not None:
     df = pd.read_csv(uploaded_file)
 elif use_sample:
     # Replace the URL below with your actual GitHub raw CSV link
-    url = "https://github.com/gardnerlingjia-blip/SafeAI-dashboard//data/sample_predictions.csv"
+    url = "https://github.com/gardnerlingjia-blip/SafeAI-dashboard/blob/main/data/sample_predictions.csv"
     try:
         df = pd.read_csv(url)
         st.info("Loaded sample data from GitHub.")
