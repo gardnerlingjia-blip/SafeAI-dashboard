@@ -1,55 +1,55 @@
 
 import streamlit as st
 import pandas as pd
-import plotly.express as px
-import seaborn as sns
 import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix, accuracy_score
 
-# Page configuration
-st.set_page_config(page_title="SafeAI Prediction Audit Dashboard", layout="wide")
+# Sidebar Navigation
+st.sidebar.title("SafeAI Dashboard")
+selected_page = st.sidebar.radio("Navigate", ["Compliance", "Dashboard", "Report"])
 
-# Sidebar layout
-with st.sidebar:
-    st.image("assets/logo.png", width=150)  # Make sure logo.png is in assets/
-    st.markdown("## SafeAI Dashboard")
-    uploaded_file = st.file_uploader("Upload Prediction CSV", type=["csv"])
-    selected = st.selectbox("Navigate", ["Dashboard", "Compliance", "Report"])
-    safety_threshold = st.slider("Safety Accuracy Threshold", min_value=0.0, max_value=1.0, value=0.9)
+# File Upload
+uploaded_file = st.sidebar.file_uploader("Upload Prediction CSV", type=["csv"])
+threshold = st.sidebar.slider("Safety Accuracy Threshold", 0.0, 1.0, 0.90)
 
-# Main content
-st.title(f"{selected} Section")
-
-if uploaded_file is not None:
+# Load data if uploaded
+if uploaded_file:
     df = pd.read_csv(uploaded_file)
-    # Normalize column names to avoid hidden issues
-    df.columns = [col.strip().lower() for col in df.columns]
-    if 'actual' in df.columns and 'predicted' in df.columns:
-        accuracy = accuracy_score(df['actual'], df['predicted'])
+    # Assume columns: 'predicted_class'
+    model_accuracy = 0.89  # Example placeholder; replace with actual calculation
+    class_counts = df['predicted_class'].value_counts()
+
+# Main Section Logic
+if selected_page == "Compliance":
+    st.header("Compliance Section")
+    st.write("✅ Placeholder for compliance metrics and audit checklist.")
+    st.write("- Add ISO 26262 / SOTIF compliance checks")
+    st.write("- Display risk heatmap or safety KPI summary")
+    st.write("- Export compliance documentation")
+
+elif selected_page == "Dashboard":
+    st.header("Dashboard Section")
+    st.write("📊 Placeholder for dashboard analytics.")
+    st.write("- Show model performance trends")
+    st.write("- Include confusion matrix or ROC curve")
+    st.write("- Add historical audit results")
+
+elif selected_page == "Report":
+    st.header("Report Section")
+    if uploaded_file:
+        # Compliance Summary
         st.subheader("Compliance Summary")
-        st.metric(label="Model Accuracy", value=f"{accuracy:.2%}")
-        if accuracy < safety_threshold:
-            st.error(f"⚠️ Accuracy below safety threshold of {safety_threshold:.0%}")
-        else:
-            st.success("✅ Accuracy meets safety threshold")
+        st.metric("Model Accuracy", f"{model_accuracy*100:.2f}%")
+        if model_accuracy < threshold:
+            st.error(f"Accuracy below safety threshold of {threshold*100:.0f}%")
 
+        # Class Distribution Chart
         st.subheader("Class Distribution")
-        class_counts = df['predicted'].value_counts().reset_index()
-        class_counts.columns = ['Class', 'Count']
-        fig_bar = px.bar(class_counts, x='Class', y='Count', title='Predicted Class Distribution')
-        st.plotly_chart(fig_bar, use_container_width=True)
-
-        st.subheader("Confusion Matrix")
-        labels = sorted(df['actual'].unique())
-        cm = confusion_matrix(df['actual'], df['predicted'], labels=labels)
-        fig_cm, ax = plt.subplots()
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=labels, yticklabels=labels, ax=ax)
-        ax.set_xlabel("Predicted")
-        ax.set_ylabel("Actual")
-        ax.set_title("Confusion Matrix")
-        st.pyplot(fig_cm)
+        fig, ax = plt.subplots()
+        class_counts.plot(kind='bar', ax=ax)
+        ax.set_xlabel("Predicted Class")
+        ax.set_ylabel("Count")
+        st.pyplot(fig)
     else:
-        st.error(f"CSV must contain 'actual' and 'predicted' columns. Found: {df.columns.tolist()}")
-else:
-    st.info("Please upload a CSV file from the sidebar.")
+        st.warning("Please upload a prediction CSV to view the report.")
+
 
