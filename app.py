@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -32,8 +33,8 @@ if uploaded_file:
     df = pd.read_csv(uploaded_file)
     st.success("File uploaded successfully.")
     # Check required columns
-    if "confidence" not in df.columns or "predicted" not in df.columns:
-        st.error("CSV must contain 'predicted' and 'confidence' columns.")
+    if "confidence" not in df.columns or "prediction" not in df.columns:
+        st.error("CSV must contain 'prediction' and 'confidence' columns.")
     else:
         # Add Audit Result column
         df["Audit Result"] = np.where(df["confidence"] >= threshold, "Pass", "Fail")
@@ -70,14 +71,16 @@ elif menu == "Dashboard":
     st.header("Dashboard")
     if df is not None:
         st.subheader("Audit Summary")
-        st.dataframe(df[["image_id", "prediction", "confidence", "Audit Result"]])
+        required_cols = ["image_id", "prediction", "confidence", "Audit Result"]
+        available_cols = [col for col in required_cols if col in df.columns]
+        st.dataframe(df[available_cols])
 
         # KPIs
         fail_rate = (df["Audit Result"] == "Fail").mean()
         st.metric("Fail Rate", f"{fail_rate:.2%}")
 
         # Image Viewer
-        if image_folder and os.path.exists(image_folder):
+        if image_folder and os.path.exists(image_folder) and "image_id" in df.columns:
             selected_image = st.selectbox("Select image", df["image_id"])
             image_path = os.path.join(image_folder, selected_image)
             st.image(Image.open(image_path), caption=selected_image)
@@ -102,7 +105,7 @@ elif menu == "Report":
             pdf.set_font("Arial", size=12)
             pdf.cell(200, 10, txt="Compliance Audit Report", ln=True, align="C")
             for index, row in dataframe.iterrows():
-                pdf.cell(200, 10, txt=f"{row['image_id']} - {row['Audit Result']} ({row['confidence']:.2f})", ln=True)
+                pdf.cell(200, 10, txt=f"{row.get('image_id', 'N/A')} - {row['Audit Result']} ({row['confidence']:.2f})", ln=True)
             pdf.output(filename)
             return filename
 
