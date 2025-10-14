@@ -1,4 +1,3 @@
-
 filename,predicted,confidence,actual,risk_flag,timestamp,weather,location
 image_1.png,traffic_light,0.9,traffic_light,low,2025-10-14 08:00:00,clear,Stuttgart
 image_2.png,bus,0.7,bus,medium,2025-10-14 08:00:30,snow,Hamburg
@@ -100,4 +99,3 @@ image_97.png,truck,0.82,truck,low,2025-10-14 08:48:00,fog,Hamburg
 image_98.png,motorcycle,0.52,motorcycle,high,2025-10-14 08:48:30,snow,Hamburg
 image_99.png,traffic_light,0.46,bicycle,high,2025-10-14 08:49:00,cloudy,Stuttgart
 image_100.png,truck,0.71,truck,medium,2025-10-14 08:49:30,clear,Stuttgart
-
