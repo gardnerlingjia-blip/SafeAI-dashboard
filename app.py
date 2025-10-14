@@ -1,108 +1,62 @@
 
+
 import streamlit as st
 import pandas as pd
-from pages.dashboard import show_dashboard
-from pages.compliance import show_compliance
-from utils.metrics import compute_metrics
-from streamlit_option_menu import option_menu
-import base64
-
 import plotly.express as px
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, accuracy_score
 
+# Page configuration
+st.set_page_config(page_title="SafeAI Prediction Audit Dashboard", layout="wide")
 
-
-# Custom CSS
-st.markdown("""
-    <style>
-        .sidebar .sidebar-content {
-            background-color: #f8f9fa;
-            padding: 20px;
-        }
-        .css-1d391kg {
-            font-size: 24px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-    </style>
-""", unsafe_allow_html=True)
-
-
-# Sidebar
+# Sidebar layout
 with st.sidebar:
-    st.image("assets/logo.png", width=150)
+    st.image("assets/logo.png", width=150)  # Make sure logo.png is in assets/
     st.markdown("## SafeAI Dashboard")
     uploaded_file = st.file_uploader("Upload Prediction CSV", type=["csv"])
     selected = st.selectbox("Navigate", ["Dashboard", "Compliance", "Report"])
+    safety_threshold = st.slider("Safety Accuracy Threshold", min_value=0.0, max_value=1.0, value=0.9)
 
+# Main content
 st.title(f"{selected} Section")
 
-
-
-# Load data into session state
 if uploaded_file:
-    df = pd.read_csv(uploaded_file)
-    st.session_state["data"] = df
-
-# Navigation
-page = st.sidebar.radio("Navigate", ["Dashboard", "Compliance", "Report"])
-
-# Page routing
-if page == "Dashboard":
-    show_dashboard()
-elif page == "Compliance":
-    show_compliance()
-elif page == "Report":
-    st.header("📄 Audit Report")
-    if "data" not in st.session_state:
-        st.warning("Please upload a CSV file from the sidebar.")
-    else:
-        df = st.session_state["data"]
-        metrics = compute_metrics(df)
-        if metrics:
-            st.subheader("Model Performance Metrics")
-            for k, v in metrics.items():
-                if k == "Confusion Matrix":
-                    st.write("Confusion Matrix:")
-                    st.write(v)
-                else:
-                    st.metric(k, f"{v:.2f}")
-        else:
-            st.info("True labels not available. Metrics cannot be computed.")
-
-        st.subheader("Export Report")
-        st.download_button("Download CSV", df.to_csv(index=False), "audit_report.csv", "text/csv")
-
-
-if uploaded_file:
+    # Read CSV file
     df = pd.read_csv(uploaded_file)
 
+    # Validate columns
     if 'actual' in df.columns and 'predicted' in df.columns:
-        # Accuracy
+        # ✅ Compliance Summary
         accuracy = accuracy_score(df['actual'], df['predicted'])
-        st.metric("Model Accuracy", f"{accuracy:.2%}")
-
-        # Compliance check
-        safety_threshold = 0.9
+        st.subheader("Compliance Summary")
+        st.metric(label="Model Accuracy", value=f"{accuracy:.2%}")
         if accuracy < safety_threshold:
-            st.error(f"⚠️ Accuracy below {safety_threshold:.0%}")
+            st.error(f"⚠️ Accuracy below safety threshold of {safety_threshold:.0%}")
         else:
             st.success("✅ Accuracy meets safety threshold")
 
-        # Class distribution
+        # ✅ Class Distribution Chart
         st.subheader("Class Distribution")
-        fig_bar = px.bar(df['predicted'].value_counts(), title="Predicted Class Distribution")
-        st.plotly_chart(fig_bar)
+        class_counts = df['predicted'].value_counts().reset_index()
+        class_counts.columns = ['Class', 'Count']
+        fig_bar = px.bar(class_counts, x='Class', y='Count', title='Predicted Class Distribution')
+        st.plotly_chart(fig_bar, use_container_width=True)
 
-        # Confusion matrix
+        # ✅ Confusion Matrix Heatmap
         st.subheader("Confusion Matrix")
         labels = sorted(df['actual'].unique())
         cm = confusion_matrix(df['actual'], df['predicted'], labels=labels)
-        fig, ax = plt.subplots()
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=labels, yticklabels=labels)
-        st.pyplot(fig)
+        fig_cm, ax = plt.subplots()
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=labels, yticklabels=labels, ax=ax)
+        ax.set_xlabel("Predicted")
+        ax.set_ylabel("Actual")
+        ax.set_title("Confusion Matrix")
+        st.pyplot(fig_cm)
+
     else:
         st.error("CSV must contain 'actual' and 'predicted' columns.")
+else:
+    st.info("Please upload a CSV file from the sidebar.")
+
 
