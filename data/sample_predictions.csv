@@ -1,4 +1,4 @@
-filename,prediction,confidence,true_label,risk_flag,timestamp,weather,location
+filename,predicted,confidence,actual,risk_flag,timestamp,weather,location
 image_1.png,traffic_light,0.9,traffic_light,low,2025-10-14 08:00:00,clear,Stuttgart
 image_2.png,bus,0.7,bus,medium,2025-10-14 08:00:30,snow,Hamburg
 image_3.png,bus,0.87,bus,low,2025-10-14 08:01:00,clear,Munich
