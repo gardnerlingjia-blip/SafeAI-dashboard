@@ -33,8 +33,8 @@ if uploaded_file:
     df = pd.read_csv(uploaded_file)
     st.success("File uploaded successfully.")
     # Check required columns
-    if "confidence" not in df.columns or "prediction" not in df.columns:
-        st.error("CSV must contain 'prediction' and 'confidence' columns.")
+    if "confidence" not in df.columns or "predicted" not in df.columns:
+        st.error("CSV must contain 'predicted' and 'confidence' columns.")
     else:
         # Add Audit Result column
         df["Audit Result"] = np.where(df["confidence"] >= threshold, "Pass", "Fail")
@@ -46,10 +46,10 @@ if menu == "Compliance":
     st.header("Compliance Section")
     st.write("ISO 26262 / SOTIF checks, risk heatmap, and compliance export.")
 
-    if df is not None and all(col in df.columns for col in ["confidence", "prediction", "Audit Result"]):
+    if df is not None and all(col in df.columns for col in ["confidence", "predicted", "Audit Result"]):
         # Risk Heatmap
         st.subheader("Risk Heatmap")
-        pivot = df.pivot_table(values="confidence", index="prediction", columns="Audit Result", aggfunc="mean")
+        pivot = df.pivot_table(values="confidence", index="predicted", columns="Audit Result", aggfunc="mean")
         fig, ax = plt.subplots()
         sns.heatmap(pivot, cmap="coolwarm", annot=True, ax=ax)
         st.pyplot(fig)
@@ -71,7 +71,7 @@ elif menu == "Dashboard":
     st.header("Dashboard")
     if df is not None:
         st.subheader("Audit Summary")
-        required_cols = ["image_id", "prediction", "confidence", "Audit Result"]
+        required_cols = ["image_id", "predicted", "confidence", "Audit Result"]
         available_cols = [col for col in required_cols if col in df.columns]
         st.dataframe(df[available_cols])
 
