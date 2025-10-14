@@ -1,0 +1,6 @@
+filename,prediction,confidence,true_label,risk_flag
+image_1.png,pedestrian,0.92,pedestrian,low
+image_2.png,car,0.85,car,low
+image_3.png,traffic_light,0.78,traffic_light,medium
+image_4.png,car,0.6,truck,high
+image_5.png,bicycle,0.45,bicycle,medium
