@@ -1,8 +1,8 @@
 
 streamlit
-streamlit-option-menu
-plotly
-seaborn
-scikit-learn
-matplotlib
 pandas
+numpy
+pillow
+fpdf
+seaborn
+matplotlib
