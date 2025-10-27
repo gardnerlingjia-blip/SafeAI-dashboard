@@ -1,8 +1,7 @@
-
+threading
+uvicorn
 streamlit
 pandas
-numpy
+streamlit.web.cli
 pillow
-fpdf
-seaborn
-matplotlib
+scikit-learn
