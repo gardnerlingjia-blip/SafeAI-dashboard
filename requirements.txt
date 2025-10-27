@@ -1,19 +1,11 @@
-threading
-uvicorn
 streamlit
 pandas
-<<<<<<< HEAD
-streamlit.web.cli
-pillow
-scikit-learn
-=======
 numpy
 pillow
-fpdf
 seaborn
 matplotlib
 plotly
 scikit-learn
 fastapi
 uvicorn[standard]
->>>>>>> 72dfaf4 (Save local changes before pulling)
+fpdf
