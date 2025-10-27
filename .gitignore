@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+venv/
+.env/
+frontend/.streamlit/
+*.log
+assets/logs.txt
+data/*.zip
+data/*.csv
+data/*.jpg
+safeai-dashboard/charts/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
