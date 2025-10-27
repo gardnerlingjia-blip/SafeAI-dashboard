@@ -17,3 +17,8 @@ A Streamlit dashboard to simulate safety audits for image classification models 
    ```bash
    git clone https://github.com/your-username/safeai_dashboard.git
 Streamlit dashboard for auditing image classification models in automotive safety systems.
+
+Branches:
+- frontend: Streamlit dashboard (deployed on Streamlit Cloud)
+- backend: FastAPI service (to be deployed on Hugging Face Spaces or Azure)
+
