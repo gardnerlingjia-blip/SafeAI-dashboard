@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> aed4113a6fc0a5c26bf5574dc96e9699596b6d28
 streamlit
 pandas
 numpy
@@ -10,6 +7,5 @@ seaborn
 matplotlib
 plotly
 scikit-learn
-fastapi
-uvicorn[standard]
 fpdf
+
