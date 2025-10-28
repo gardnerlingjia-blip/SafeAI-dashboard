@@ -4,3 +4,6 @@ pandas
 matplotlib
 numpy
 fpdf
+plotly
+openpyxl
+scikit-learn
